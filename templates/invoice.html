@@ -131,9 +131,9 @@
                                     <img src="https://imgur.com/edx5Sb0.png" style="height: 100px;">
                                 </td>
                                 <td>
-                                    Invoice #: 123<br>
-                                    Created: July 2, 2018<br>
-                                    Due: August 1, 2018
+                                    Invoice #: {{invoice_number}}<br>
+                                    Created: {{date}}<br>
+                                    Due: {{duedate}}
                                 </td>
             
                             </tr>
@@ -147,14 +147,14 @@
                         <table>
                             <tr>
                                 <td>
-                                    Python Tips.<br>
-                                    12345 Sunny Road<br>
-                                    Sunnyville, CA 12345
+                                    {{from_addr['company_name']}}<br>
+                                    {{from_addr['addr1']}}<br>
+                                    {{from_addr['addr2']}}
                                 </td>
                                 <td>
-                                    Acme Corp.<br>
-                                    John Doe<br>
-                                    john@example.com
+                                    {{to_addr['company_name']}}<br>
+                                    {{to_addr['person_name']}}<br>
+                                    {{to_addr['person_email']}}
                                 </td>
                             </tr>
                         </table>
@@ -170,37 +170,20 @@
                     </td>
                     
                 </tr>
-                <tr class="item">
-                    <td>
-                        Website design
-                    </td>
-                    <td>
-                        $300.00
-            
-                    </td>
-                </tr>
-                <tr class="item">
-                    <td>
-                        Hosting (3 months)
-                    </td>
-                    <td>
-                        $75.00
-                    </td>
-                </tr>
-                <tr class="item last">
-                    <td>
-                        Domain name (1 year)
-                    </td>
-                    <td>
-                        $10.00
-                    </td>
-                </tr>
-                    
-                
+                {% for item in items %}
+                    <tr class="item">
+                        <td>
+                            {{item['title']}}
+                        </td>
+                        <td>
+                            ${{item['charge']}}
+                        </td>
+                    </tr>
+                {% endfor %}
                 <tr class="total">
                     <td></td>
                     <td>
-                        Total: $385.00
+                        Total: $ {{total}}
                     </td>
                 </tr>
                     
