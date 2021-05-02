@@ -2,6 +2,7 @@ from flask import Flask, render_template, send_file
 import os 
 from datetime import datetime
 from weasyprint import HTML
+import io
 
 app=Flask(__name__)
 
@@ -44,8 +45,11 @@ def hello_world():
                                             invoice_number=invoice_number,
                                             duedate=duedate)
     html=HTML(string=rendered)
-    rendered_pdf=html.write_pdf('./static/invoice.pdf')
-    return send_file('./static/invoice.pdf')
+    rendered_pdf=html.write_pdf()
+    return send_file(
+        io.BytesIO(rendered_pdf),
+        attachement_filename='invoice.pdf'
+    )
 
 
 if __name__=='__main__':
