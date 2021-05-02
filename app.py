@@ -1,4 +1,4 @@
-from flask import Flask, render_template, send_file
+from flask import Flask, render_template, send_file, request
 import os 
 from datetime import datetime
 from weasyprint import HTML
@@ -7,35 +7,44 @@ import io
 app=Flask(__name__)
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def hello_world():
+    posted_data=request.get_json() or {}
     today=datetime.today().strftime("%B %-d, %Y")
-    invoice_number=123
-    from_addr={
-        'company_name':'Python Tip',
-        'addr1':'12345 Sunny Road',
-        'addr2':'Sunnyvill, CA 12345'
-    }
-    to_addr={
-        'company_name':'Acme Corp',
-        'person_name':'John Dilly',
-        'person_email':'john@example.com'
-    }
-    items=[
-        {
-            'title':'website design',
-            'charge':300.00
+    default_data={
+        'duedate':'August 1, 2019',
+        'from_addr':{
+            'company_name':'Python Tip',
+            'addr1':'12345 Sunny Road',
+            'addr2':'Sunnyvill, CA 12345'
         },
-        {
-            'title':'Hosting (3 months)',
-            'charge':75.00
-        },
-        {
-            'title':'Domain name (1 year)',
-            'charge':10.00
+        'invoice_number':123,
+        'items':[
+            {
+                'title':'website design',
+                'charge':300.00
+            },
+            {
+                'title':'Hosting (3 months)',
+                'charge':75.00
+            },
+            {
+                'title':'Domain name (1 year)',
+                'charge':10.00
+            }
+        ],
+        'to_addr':{
+            'company_name':'Acme Corp',
+            'person_name':'John Dilly',
+            'person_email':'john@example.com'
         }
-    ]
-    duedate="August 1, 2018"
+    }
+    duedate=posted_data.get('duedate', default_data['duedate'])
+    from_addr=posted_data.get('from_addr', default_data['from_addr'])
+    to_addr=posted_data.get('to_addr', default_data['to_addr'])
+    invoice_number=posted_data.get('invoice_number', default_data['invoice_number'])
+    items=posted_data.get('items', default_data['items'])
+
     total=sum([i['charge'] for i in items])
     rendered = render_template('invoice.html', date=today, 
                                             from_addr=from_addr, 
@@ -48,7 +57,7 @@ def hello_world():
     rendered_pdf=html.write_pdf()
     return send_file(
         io.BytesIO(rendered_pdf),
-        attachement_filename='invoice.pdf'
+        attachment_filename='invoice.pdf'
     )
 
 
